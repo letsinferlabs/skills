@@ -99,8 +99,44 @@ limit. Do not describe process-local prefix reuse as restored NVMe cache.
 
 Root `release.json` uses the current publication schema, a non-empty ordered
 authors array, the SPDX license, and unmaterialized automation-owned
-provenance. Do not hand-author consensus, provenance, qualification status, or
-the generated root catalog.
+provenance.
+
+Attribute the runtime implementation, including materially derived work:
+
+- Inspect the candidate’s Git history, upstream repository and pull requests,
+  carried patches/kernels/recipes, source headers, and license/notices before
+  choosing authors. Do not infer authorship only from the current submitter or
+  the last commit.
+- Include the identifiable people or organizations whose runtime-specific
+  implementation is materially incorporated: original recipe or integration
+  authors first, followed by downstream authors who adapted, ported, or added
+  substantial behavior. Preserve that order across releases.
+- Preserve an existing author while their material contribution remains in the
+  candidate. Append a new material contributor; do not replace the upstream
+  author with the person who ported or submitted the derived work. Remove an
+  author only when their contribution is no longer present, and explain that
+  lineage change in the pull request.
+- Do not list a model/checkpoint author merely because the runtime downloads
+  their weights. Link and pin the model as required, but list them as a runtime
+  author only when their serving implementation, recipe, patch, or equivalent
+  runtime work is actually incorporated.
+- Benchmark verifiers, reviewers, sponsors, and repository maintainers are not
+  runtime authors unless they also contributed material runtime source or
+  design used by the candidate.
+- Record each author’s current visible GitHub login, immutable numeric GitHub
+  ID, and actual account type. Verify the identity through GitHub; never guess
+  an ID, convert a person into an organization for convenience, or use a
+  mutable display name.
+- `release.json.authors` is a concise runtime-authorship list, not a substitute
+  for copyright and dependency attribution. Preserve every upstream LICENSE,
+  NOTICE, copyright, and source-link obligation in the candidate even when a
+  dependency’s full contributor list does not belong in `authors`.
+
+Do not add role or derivation fields that the publication schema does not
+define. Put helpful acknowledgements and derived-source links in the README or
+notices, while keeping the structured `authors` identities schema-valid. Do
+not hand-author consensus, provenance, qualification status, or the generated
+root catalog.
 
 Generate the candidate README’s canonical Let’s Infer installation block:
 
