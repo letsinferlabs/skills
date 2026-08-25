@@ -1,0 +1,4 @@
+interface:
+  display_name: "Benchmark Let’s Infer Runtime"
+  short_description: "Run reproducible Let’s Infer benchmarks"
+  default_prompt: "Use $letsinfer-benchmark to run or audit this Let’s Infer runtime benchmark against its exact declared contract."

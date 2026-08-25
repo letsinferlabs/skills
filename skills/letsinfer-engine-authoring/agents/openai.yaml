@@ -1,0 +1,4 @@
+interface:
+  display_name: "Author Let’s Infer Engine"
+  short_description: "Adapt a new or radically changed Engine"
+  default_prompt: "Use $letsinfer-engine-authoring to make this inference Engine reproducible and conform to the Let’s Infer protocol."

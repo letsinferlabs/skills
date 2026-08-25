@@ -1,0 +1,4 @@
+interface:
+  display_name: "Author Let’s Infer Runtime"
+  short_description: "Build and qualify a Let’s Infer runtime"
+  default_prompt: "Use $letsinfer-runtime-authoring to create a reproducible Let’s Infer runtime candidate for this model and target."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Operate Let’s Infer"
+  short_description: "Operate Let’s Infer safely from the CLI"
+  default_prompt: "Use $letsinfer-cli to inspect this Let’s Infer installation and perform the requested operation safely."

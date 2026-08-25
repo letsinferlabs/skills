@@ -1,0 +1,17 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "groupings": [
+    {
+      "title": "Operate Let’s Infer",
+      "skills": ["letsinfer-cli"]
+    },
+    {
+      "title": "Develop Let’s Infer runtimes",
+      "skills": [
+        "letsinfer-runtime-authoring",
+        "letsinfer-engine-authoring",
+        "letsinfer-benchmark"
+      ]
+    }
+  ]
+}
