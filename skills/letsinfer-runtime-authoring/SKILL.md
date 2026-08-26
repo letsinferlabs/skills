@@ -88,6 +88,15 @@ ranks, stages, collectives, rendezvous, and Engine flags; Core receives only
 generic `task-N` assignments, phased lifecycle, bounded resources, readiness,
 and one complete-group endpoint.
 
+For a true ConnectX RDMA target, set `interconnect.kind: connectx` and
+`rdma_required: true` with measured speed and MTU floors. Core maps the
+endpoint-owner task to the main node, seals and revalidates one interface and
+HCA per task, exposes only their exact `rdma_cm` and `uverbs` character
+devices, and bounds memlock by the declared container memory. Treat
+`LETSINFER_RDMA_INTERFACE` and `LETSINFER_RDMA_DEVICE` as protected Core inputs;
+the Engine maps them to its private collective configuration and must not pass
+readiness after a socket or other non-RDMA fallback.
+
 ## Treat persistent cache as a contract
 
 If the Engine supports safe persistent inference-state restore, use Core’s

@@ -68,6 +68,15 @@ Protect Core-owned listeners, mounts, credentials, authentication, admission,
 safety, and protocol values from runtime overrides. Treat a protocol-owned
 environment name or argument as reserved.
 
+For an RDMA-required parallel runtime, consume the protected
+`LETSINFER_RDMA_INTERFACE` and `LETSINFER_RDMA_DEVICE` values instead of
+discovering or selecting another host resource. Configure the Engine's private
+collective transport from those values and make task readiness fail if the
+native Engine selects sockets or another non-RDMA path. Preserve enough native
+transport evidence to prove verbs, IB collectives, and GPUDirect during
+physical qualification without adding Engine-specific transport fields to
+Core.
+
 ## Build deterministically without publishing
 
 Use the checked-out runtimes repository’s candidate audit, Docker/buildx,
