@@ -1,6 +1,6 @@
 ---
 name: letsinfer-cli
-description: Operate and troubleshoot the Let’s Infer CLI for node setup, signed model installation, serving, replication, status, API keys, updates, runtime upgrades, rollback, recovery, and removal. Use for an installed Let’s Infer system, not for authoring a new runtime candidate.
+description: Operate and troubleshoot the Let’s Infer CLI for nodes, signed model installation, serving, status, authentication, updates, rollback, recovery, and removal. Use for an installed Let’s Infer system, not for authoring a runtime candidate.
 ---
 
 # Operate Let’s Infer
@@ -14,11 +14,11 @@ the same revision.
 
 ## Preserve the product model
 
-- Users install a model with `letsinfer install MODEL`.
+- Users install a model with `letsinfer model install MODEL`.
 - The signed catalog and detected hardware select the recommended qualified
   runtime. There is no user-facing Engine selector.
 - `--runtime CANDIDATE_ID` is an explicit exact-candidate override.
-- `letsinfer update` changes Core only. `letsinfer upgrade MODEL` changes that
+- `letsinfer update core` changes Core only. `letsinfer update model MODEL` changes that
   model’s runtime only. Neither silently changes the other.
 - Use the public topology terms **node**, **main**, and **child**. Do not expose
   retired topology vocabulary.
@@ -30,8 +30,8 @@ the same revision.
 Start with the narrowest useful read-only commands:
 
 ```bash
-letsinfer node status
-letsinfer hardware --json
+letsinfer node info --json
+letsinfer node list --json
 letsinfer status --json
 letsinfer doctor --json
 letsinfer update check
@@ -50,37 +50,38 @@ admission, or Watchdog protection to make an operation pass.
 
 ### Set up and inspect nodes
 
-Use `letsinfer setup` for the first machine. It becomes the main node. Use
-`node`, `topology`, and `child` commands from the installed help to inspect or
-manage additional nodes. Confirm the command’s printed `main`, `child`, or
-`all` execution scope before mutating topology or access state.
+The installer initializes the first machine as the main node. Use `node info`,
+`node list`, and the unified `node add` workflow to inspect or add machines;
+use `node pause`, `node resume`, and `node remove` for maintenance. Confirm the
+printed `main` or `all` execution scope before mutating node state.
 
 ### Discover and install a model
 
 ```bash
-letsinfer list
-letsinfer list MODEL --versions
-letsinfer install MODEL
+letsinfer model list
+letsinfer model list MODEL --versions
+letsinfer model install MODEL
 ```
 
-For replication, let interactive install propose compatible nodes or use the
-documented `--node`, `--all-nodes`, and `letsinfer scale MODEL --replicas N`
-controls. Review incompatibilities and replacement impact before using
-`--replace-existing`.
+Omit `MODEL` to use the interactive node/model matrix. Assigning the same model
+to multiple nodes creates replicas automatically; review incompatibilities and
+replacement impact before using `--replace-existing`.
 
 ### Inspect and control serving
 
-Use `status`, `runtimes`, `inspect`, `verify`, `doctor`, and `logs` to establish
-the exact model, runtime pack, Engine OCI, target, service, gateway, and
-Watchdog state. Use `start`, `restart`, or `stop` only after inspection.
+Use `status`, `doctor`, `model list`, and `model logs MODEL` to establish the
+exact model, runtime pack, Engine OCI, target, service, gateway, and Watchdog
+state. Use `model pause`, `model resume`, or `model restart` only after
+inspection.
 
 A protection trip is not an ordinary stopped service. Inspect the trip and its
-cause; use `recover` only as the explicit acknowledgement path after the cause
-is addressed. Do not use start or restart to erase safety history.
+cause; use `model recover MODEL` only as the explicit acknowledgement path
+after the cause is addressed. Do not use resume or restart to erase safety
+history.
 
 ### Manage access
 
-Create, list, rotate, and revoke API keys through `letsinfer key`. Key mutation
+Create, list, rotate, and revoke API keys through `letsinfer auth key`. Key mutation
 is main-node authority, and secret material is shown once. Verify the stable
 OpenAI-compatible gateway after any access change without printing secrets.
 
@@ -88,11 +89,11 @@ OpenAI-compatible gateway after any access change without printing secrets.
 
 ```bash
 letsinfer update check
-letsinfer update
-letsinfer upgrade MODEL --dry-run
-letsinfer upgrade MODEL
-letsinfer rollback MODEL --dry-run
-letsinfer rollback MODEL
+letsinfer update core
+letsinfer update model MODEL --dry-run
+letsinfer update model MODEL
+letsinfer model rollback MODEL --dry-run
+letsinfer model rollback MODEL
 ```
 
 An upgrade is explicit and model-tied. For a recommended installation, a newer

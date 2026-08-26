@@ -33,7 +33,7 @@ FORBIDDEN_PUBLIC_TEXT = (
     "letsinferlabs/work",
     "scratchpad/",
 )
-ALLOWED_SKILL_CHILDREN = {"SKILL.md", "agents"}
+ALLOWED_SKILL_CHILDREN = {"SKILL.md", "agents", "references", "scripts"}
 
 
 class ValidationError(RuntimeError):
@@ -144,6 +144,34 @@ def validate_skill(skill_dir: pathlib.Path) -> set[str]:
     if set(child.name for child in agents.iterdir()) != {"openai.yaml"}:
         fail(f"skills/{skill}: agents must contain exactly openai.yaml")
     validate_openai_metadata(skill, agents / "openai.yaml")
+    supporting = {
+        str(file.relative_to(skill_dir))
+        for folder in ("references", "scripts")
+        if (skill_dir / folder).is_dir()
+        for file in (skill_dir / folder).rglob("*")
+        if file.is_file()
+    }
+    expected_supporting = (
+        {"references/runtime-pack.md", "scripts/pack_runtime.py"}
+        if skill == "letsinfer-runtime-authoring"
+        else set()
+    )
+    if supporting != expected_supporting:
+        fail(
+            f"skills/{skill}: unexpected supporting resources: "
+            f"{sorted(supporting ^ expected_supporting)}"
+        )
+    for relative in sorted(supporting):
+        supporting_path = skill_dir / relative
+        supporting_text = supporting_path.read_text(encoding="utf-8")
+        validate_public_text(supporting_path, supporting_text)
+        if supporting_path.suffix == ".md":
+            urls.update(validate_links(supporting_path, supporting_text))
+        elif supporting_path.suffix == ".py":
+            try:
+                compile(supporting_text, str(supporting_path), "exec")
+            except SyntaxError as error:
+                fail(f"{supporting_path.relative_to(ROOT)}: invalid Python: {error}")
     for file in skill_dir.rglob("*"):
         if file.is_file() and file.stat().st_mode & 0o111:
             fail(f"{file.relative_to(ROOT)}: executable skill payloads are not allowed")
