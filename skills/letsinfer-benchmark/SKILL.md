@@ -108,6 +108,14 @@ declared qualification only after it passes. The full evidence should cover:
    reboot persistence; and
 8. the complete soak plan when the runtime contract requires one.
 
+For a target with `rdma_required: true`, physical qualification must also prove
+that every task uses its exact Core-provided ConnectX interface and HCA, verbs
+and IB collectives work, GPUDirect RDMA is active, and transport counters move
+under load. Prove that socket or other non-RDMA fallback cannot pass readiness,
+then exercise link loss, whole-group unavailability, topology revalidation,
+and complete-group recovery. Static inventory or an RDMA-capable link flag is
+not transport evidence.
+
 A failed correctness, safety, identity, cache, stability, or capacity gate is
 not a slow result. Stop and repair that boundary before continuing.
 
