@@ -22,8 +22,8 @@ the instructions match the code revision being changed.
 ## Recover the starting identity
 
 Before optimizing or porting, record the exact prior model and tokenizer
-revision, runtime version, Engine OCI manifest and configuration digests,
-upstream Engine version, target, arguments, environment, context/capacity
+revision, runtime version, Engine OCI manifest, configuration, and execution
+payload digests, upstream Engine version, target, arguments, environment, context/capacity
 envelope, cache lifecycle, benchmark contract, and comparable evidence. Never
 compare or transfer evidence across a changed identity.
 
@@ -41,8 +41,9 @@ Do not add nested model/Engine/target trees or a second execution manifest.
 
 Classify the Engine path before editing:
 
-- **Reuse Engine:** preserve the exact existing Engine manifest and image
-  configuration digests. Omit `adapter/`, `engine/`, and `image/`; do not copy
+- **Reuse Engine:** preserve the exact existing Engine manifest,
+  configuration, and execution-payload digests. Omit `adapter/`, `engine/`,
+  and `image/`; do not copy
   an unchanged Engine merely because a new runtime uses it.
 - **Change or add Engine:** include the complete Engine source or immutable
   acquisition, adapter, deterministic image recipe, patches, kernels, tests,
@@ -60,13 +61,16 @@ Declare each required artifact, including exact filename and SHA-256 where the
 format requires it. The runtime must acquire all model files itself; operators
 do not preinstall weights or populate a runtime-specific model cache.
 
-Pin the Engine by OCI manifest digest and image configuration digest. Keep
-tokenizer behavior, exact token counting, parsers, native Engine options,
+Pin the Engine by OCI manifest digest, image configuration digest, and
+normalized execution-payload digest. Keep tokenizer behavior, exact token
+counting, parsers, native Engine options,
 Engine telemetry, cache integration, patches, and compiled kernels outside
 Core. Never use a runtime-defined `LETSINFER_*` environment name.
 
-Changing the Engine identity, model revision, recipe, behavior-bearing
-kernel/patch, or cache format creates a new qualification subject.
+Changing the Engine execution payload, model revision, recipe,
+behavior-bearing kernel/patch, or cache format creates a new qualification
+subject. Packaging-only OCI changes preserve evidence when the payload digest
+is unchanged; benchmark records retain the measured OCI digest for traceability.
 
 ## Define the measured target and recipe
 
@@ -157,15 +161,17 @@ Use the tools from the checked-out runtimes repository; do not invent a second
 python3 tools/readme_onboarding.py --candidate <candidate> --write
 python3 tools/candidate_policy.py audit \
   --candidate <candidate> --mode <reuse-engine|build-engine>
+# For build-engine only:
+python3 tools/build_engine.py --candidate <candidate> --output /tmp/engine.oci.tar --pin
 python3 tools/generate_manifest.py --validate-only
 python3 -m unittest discover -s tests -p 'test_*.py'
 letsinfer pack <candidate> --output /tmp/runtime.letsinfer
 ```
 
-Pack unchanged source twice and require byte-identical artifacts. Verify every
-external model and image input is immutable. For a changed Engine, run its
-candidate-specific tests and protocol conformance before requesting runtime
-verification.
+Pack unchanged source twice and require byte-identical runtime packs. Verify
+every external model and image input is immutable. For a changed Engine, use
+the single canonical Engine build above, then run candidate-specific tests and
+protocol conformance before requesting runtime verification.
 
 ## Qualify the exact proposal
 

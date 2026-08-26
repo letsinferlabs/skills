@@ -83,25 +83,33 @@ Required local evidence includes:
 4. admission and structured too-large-request behavior;
 5. ordinary restart, process crash, pressure, OOM, and protection behavior;
 6. proof that runtime inputs cannot replace protocol-owned values; and
-7. two builds from unchanged inputs with identical OCI identity and package
-   inventory.
+7. one canonical Engine build with a verified manifest, configuration,
+   normalized execution-payload identity, thin immutable-base layout, and
+   package inventory.
 
-Perturb irrelevant build state such as checkout timestamps when testing
-reproducibility. A deterministic result must derive from source inputs, not an
-accidentally shared cache. Build output and package inventory remain temporary
-artifacts.
+Run the repository's canonical builder; do not construct a second buildx
+command:
 
-Calculate the future Engine manifest and image configuration digests with the
-repository tools and pin them in `runtime.json`. This calculation is local and
-does not publish an OCI. Repository automation independently checks the exact
-source identity and will reject a differing pin.
+```bash
+python3 tools/build_engine.py --candidate <candidate> --output /tmp/engine.oci.tar --pin
+```
+
+The builder uses the same digest-pinned BuildKit contract as CI, reuses its
+content-addressed local cache, and writes manifest, configuration, and payload
+identities to `runtime.json`. The payload identity binds the pinned base,
+normalized final overlay contents and modes, and runtime-relevant container
+configuration while ignoring timestamps, compression, and media labels.
+Build output and package inventory remain temporary artifacts. CI builds once
+and compares the authored identities directly; it never commits generated pins
+to the contributor branch.
 
 ## Cache and telemetry
 
 When the Engine exposes safe persistent inference-state hooks, implement the
 provider and format in the Engine OCI and use the Core-provided cache root.
-Bind safe replay to model/tokenizer, Engine OCI, format/ABI, tensor layout and
-dtype, attention backend, relevant kernels, and rendered prompt tokens.
+Bind safe replay to model/tokenizer, Engine execution payload, format/ABI,
+tensor layout and dtype, attention backend, relevant kernels, and rendered
+prompt tokens.
 
 Validate records before restore, write atomically, treat corrupt or
 incompatible state as a miss, and enforce capacity plus TTL. Qualification
