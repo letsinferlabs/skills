@@ -99,9 +99,10 @@ required.
 ## Trust and security
 
 Review skills before installing them: they guide an agent that may have your
-filesystem and shell permissions. This repository ships Markdown instructions
-and presentation metadata only. It does not ship hooks, install scripts,
-downloaders, binaries, credentials, or telemetry.
+filesystem and shell permissions. This repository ships Markdown instructions,
+presentation metadata, and one narrow runtime-pack validation helper that
+imports an explicitly selected public Core checkout. It does not ship hooks,
+installers, downloaders, binaries, credentials, or telemetry.
 
 Skill instructions link only to public Let’s Infer product and runtime
 repositories. They never require access to private workspace context.

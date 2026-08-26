@@ -1,6 +1,6 @@
 ---
 name: letsinfer-benchmark
-description: Design, run, resume, verify, audit, and report reproducible Let’s Infer runtime benchmarks. Use for context and concurrency matrices, TPS, TTFT, cache cold/warm/restart behavior, correctness, pressure, soak, telemetry, evidence hashes, or letsinfer benchmark verify on a runtime pull request.
+description: Design, run, resume, verify, audit, and report reproducible Let’s Infer runtime benchmarks. Use for context and concurrency matrices, TPS, TTFT, cache cold/warm/restart behavior, correctness, pressure, soak, telemetry, evidence hashes, or runtime pull-request verification.
 ---
 
 # Benchmark a Let’s Infer runtime
@@ -27,9 +27,9 @@ Inspect the selected model/runtime and list the declared benchmark cells before
 running expensive inference:
 
 ```bash
-letsinfer inspect MODEL --json
-letsinfer benchmark MODEL --list
-letsinfer benchmark MODEL
+letsinfer model list MODEL --installed --json
+letsinfer benchmark list MODEL
+letsinfer benchmark run MODEL
 ```
 
 Use documented context and concurrency selectors only for a narrow diagnostic
@@ -46,10 +46,9 @@ is active.
 For a public runtime proposal that has passed the repository’s readiness gate:
 
 ```bash
-letsinfer benchmark verify \
-  <pull-request-url>
-letsinfer benchmark verify status
-letsinfer benchmark verify stop
+letsinfer benchmark verification run <pull-request-url>
+letsinfer benchmark verification status
+letsinfer benchmark verification stop
 ```
 
 Verification accepts no workload or recipe overrides. It resolves the exact

@@ -154,8 +154,9 @@ candidate’s current qualification state.
 
 ## Validate locally
 
-Use the tools from the checked-out runtimes repository; do not invent a second
-`letsinfer runtime ...` development command family.
+Use the tools from the checked-out runtimes repository. Runtime development is
+deliberately absent from the product CLI; do not add or depend on a
+`letsinfer runtime ...` command family.
 
 ```bash
 python3 tools/readme_onboarding.py --candidate <candidate> --write
@@ -165,13 +166,15 @@ python3 tools/candidate_policy.py audit \
 python3 tools/build_engine.py --candidate <candidate> --output /tmp/engine.oci.tar --pin
 python3 tools/generate_manifest.py --validate-only
 python3 -m unittest discover -s tests -p 'test_*.py'
-letsinfer pack <candidate> --output /tmp/runtime.letsinfer
 ```
 
-Pack unchanged source twice and require byte-identical runtime packs. Verify
-every external model and image input is immutable. For a changed Engine, use
-the single canonical Engine build above, then run candidate-specific tests and
-protocol conformance before requesting runtime verification.
+For local deterministic pack validation, read
+[runtime pack development](references/runtime-pack.md) and use the skill’s
+helper with the exact checked-out Core revision; it packs unchanged source
+twice and requires byte-identical runtime packs. Verify every external model
+and image input is immutable. For a changed Engine, use the single canonical
+Engine build above, then run candidate-specific tests and protocol conformance
+before requesting runtime verification.
 
 ## Qualify the exact proposal
 
@@ -184,7 +187,7 @@ After the public source and supply-chain gate marks the proposal ready,
 independent users run:
 
 ```bash
-letsinfer benchmark verify <pull-request-url>
+letsinfer benchmark verification run <pull-request-url>
 ```
 
 Any accepted correctness, safety, OOM, crash, incomplete-workload, or
